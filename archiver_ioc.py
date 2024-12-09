@@ -59,16 +59,16 @@ async def write_to_pv(pv: ExamplePV):
 
 async def runner():
     print("start")
-    monitor_options = [
-        WritingOptions(60 * 14, 1.0, 1.0, 20.0),
-    ]
-    scan_options = [
-        WritingOptions(10 + 60 * 14, 10.0, 1.0, 20.0),
-    ]
     await start_server_pv(
-        create_pvs("ARCH:PERIOD:14Hz:MONITOR", monitor_options)
-        | create_pvs("ARCH:PERIOD:20Hz:MONITOR", monitor_options)
-        | create_pvs("ARCH:PERIOD:14Hz:SCAN", scan_options)
+        create_pvs("ARCH:PERIOD:14Hz:MONITOR",  [
+        WritingOptions(20 + 60 * 14, 10.0, 1.0, 20.0),
+    ])
+        | create_pvs("ARCH:PERIOD:20Hz:MONITOR",  [
+        WritingOptions(60 * 14, 10.0, 1.0, 20.0),
+    ])
+        | create_pvs("ARCH:PERIOD:14Hz:SCAN",  [
+        WritingOptions(40 + 60 * 14, 10.0, 1.0, 20.0),
+    ])
     )
     print("end")
 
