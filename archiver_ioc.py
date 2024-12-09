@@ -28,7 +28,7 @@ async def start_server_pv(pvs: dict[str, ExamplePV]):
 
 
 def pv_name(base_name: str, option: WritingOptions) -> str:
-    return f"{base_name}:{int(option.interval)}HZ"
+    return f"{base_name}:{int(option.interval)}Hz"
 
 
 def create_pvs(base_name: str, options: list[WritingOptions]) -> dict[str, ExamplePV]:
@@ -60,16 +60,14 @@ async def write_to_pv(pv: ExamplePV):
 async def runner():
     print("start")
     monitor_options = [
-        WritingOptions(60 * 14, 1.0, 1.0, 14.0),
+        WritingOptions(60 * 14, 1.0, 1.0, 20.0),
     ]
     scan_options = [
-        WritingOptions(10 + 60 * 14, 10.0, 1.0, 14.0),
+        WritingOptions(10 + 60 * 14, 10.0, 1.0, 20.0),
     ]
     await start_server_pv(
         create_pvs("ARCH:PERIOD:14Hz:MONITOR", monitor_options)
-        | create_pvs("ARCH:PERIOD:1Hz:MONITOR", monitor_options)
         | create_pvs("ARCH:PERIOD:14Hz:SCAN", scan_options)
-        | create_pvs("ARCH:PERIOD:1Hz:SCAN", scan_options)
     )
     print("end")
 
