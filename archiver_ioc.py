@@ -61,13 +61,13 @@ async def runner():
     print("start")
     await start_server_pv(
         create_pvs("ARCH:PERIOD:14Hz:MONITOR",  [
-        WritingOptions(20 + 60 * 14, 20.0, 1.0, 32.0),
+        WritingOptions(20 + 60 * 32, 20.0, 1.0, 32.0),
     ])
         | create_pvs("ARCH:PERIOD:32Hz:MONITOR",  [
-        WritingOptions(60 * 14, 0.0, 1.0, 32.0),
+        WritingOptions(60 * 32, 0.0, 1.0, 32.0),
     ])
         | create_pvs("ARCH:PERIOD:14Hz:SCAN",  [
-        WritingOptions(40 + 60 * 14, 40.0, 1.0, 32.0),
+        WritingOptions(40 + 60 * 32, 40.0, 1.0, 32.0),
     ])
     )
     print("end")
