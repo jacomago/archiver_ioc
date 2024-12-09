@@ -64,7 +64,7 @@ async def runner():
         WritingOptions(20 + 60 * 14, 20.0, 1.0, 20.0),
     ])
         | create_pvs("ARCH:PERIOD:20Hz:MONITOR",  [
-        WritingOptions(60 * 14, 10.0, 1.0, 20.0),
+        WritingOptions(60 * 14, 0.0, 1.0, 20.0),
     ])
         | create_pvs("ARCH:PERIOD:14Hz:SCAN",  [
         WritingOptions(40 + 60 * 14, 40.0, 1.0, 20.0),
