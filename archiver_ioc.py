@@ -67,6 +67,7 @@ async def runner():
     ]
     await start_server_pv(
         create_pvs("ARCH:PERIOD:14Hz:MONITOR", monitor_options)
+        | create_pvs("ARCH:PERIOD:20Hz:MONITOR", monitor_options)
         | create_pvs("ARCH:PERIOD:14Hz:SCAN", scan_options)
     )
     print("end")
