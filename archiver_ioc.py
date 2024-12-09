@@ -68,6 +68,14 @@ async def runner():
     ])
         | create_pvs("ARCH:PERIOD:14Hz:SCAN",  [
         WritingOptions(40 + 60 * 32, 40.0, 1.0, 32.0),
+    ]) | create_pvs("ARCH:PERIOD:1Hz:MONITOR",  [
+        WritingOptions(20 + 60 * 5, 20.0, 1.0, 5.0),
+    ])
+        | create_pvs("ARCH:PERIOD:5Hz:MONITOR",  [
+        WritingOptions(60 * 5, 0.0, 1.0, 5.0),
+    ])
+        | create_pvs("ARCH:PERIOD:1Hz:SCAN",  [
+        WritingOptions(40 + 60 * 5, 40.0, 1.0, 5.0),
     ])
     )
     print("end")
