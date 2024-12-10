@@ -24,6 +24,9 @@ async def start_server_pv(pvs: dict[str, ExamplePV]):
     with Server(
         providers=[{pv_name: pv.shared_pv for pv_name, pv in pvs.items()}]
     ) as _server:
+        print("Creating server with PVs:")
+        for pv_name in pvs.keys():
+            print(pv_name)
         await write_to_pvs(pvs)
 
 
@@ -68,7 +71,8 @@ async def runner():
     ])
         | create_pvs("ARCH:PERIOD:14Hz:SCAN",  [
         WritingOptions(40 + 60 * 32, 40.0, 1.0, 32.0),
-    ]) | create_pvs("ARCH:PERIOD:1Hz:MONITOR",  [
+    ]) 
+        | create_pvs("ARCH:PERIOD:1Hz:MONITOR",  [
         WritingOptions(20 + 60 * 5, 20.0, 1.0, 5.0),
     ])
         | create_pvs("ARCH:PERIOD:5Hz:MONITOR",  [
