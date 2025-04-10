@@ -18,7 +18,7 @@ services:
     networks:
       - net-2-cf
     ports:
-      - "17665:8080"
+      - "8080:8080"
     depends_on:
       mariadb:
         condition: service_healthy
