@@ -1,0 +1,2 @@
+py-epicsarchiver @ git+https://gitlab.esss.lu.se/ics-software/py-epicsarchiver.git@0.17.2
+p4p
