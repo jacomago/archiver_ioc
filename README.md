@@ -23,9 +23,5 @@ Install the dependencies
 ```bash
 python -m venv venv
 source venv/bin/activate
-git clone https://gitlab.esss.lu.se/ics-software/py-epicsarchiver.git
-cd py-epicsarchiver
-pip install .
-cd ..
-pip install p4p
+pip install -r requirements.txt
 ```
