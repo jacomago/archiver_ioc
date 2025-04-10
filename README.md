@@ -15,3 +15,17 @@ The monitor PVs start at 0 and ramp up to 840 at 14Hz.
 The scan PVs start at 10 and ramp up to 850 at 14Hz.
 
 ![alt text](image.png)
+
+## Installation
+
+Install the dependencies
+
+```
+python -m venv venv
+source venv/bin/activate
+git clone https://gitlab.esss.lu.se/ics-software/py-epicsarchiver.git
+cd py-epicsarchiver
+pip install .
+cd ..
+pip install p4p
+```
