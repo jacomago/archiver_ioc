@@ -12,10 +12,13 @@ env:
 
 jobs:
   build-and-push-image:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, ubuntu-24.04-arm]
     permissions:
       contents: read
       packages: write
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - name: Log in to the Container registry
@@ -36,7 +39,6 @@ jobs:
         with:
           context: .
           push: true
-          platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
