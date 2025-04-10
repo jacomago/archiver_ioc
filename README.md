@@ -20,7 +20,7 @@ The scan PVs start at 10 and ramp up to 850 at 14Hz.
 
 Install the dependencies
 
-```
+```bash
 python -m venv venv
 source venv/bin/activate
 git clone https://gitlab.esss.lu.se/ics-software/py-epicsarchiver.git
