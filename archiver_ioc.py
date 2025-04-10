@@ -38,7 +38,10 @@ async def start_server_pv(pvs: dict[str, ExamplePV]):
 
 
 def archive_pvs(pvs):
-    aa = ArchiverAppliance(os.environ["ARCHIVER_HOST"], os.environ["ARCHIVER_PORT"])
+    hostname = os.environ.get("ARCHIVER_HOST", "aa")
+    port = os.environ.get("ARCHIVER_PORT", "8080")
+    print(f"Archiving to {hostname}:{port}")
+    aa = ArchiverAppliance(hostname, port)
     for pv_name in pvs.keys():
         aa.pause_pv(pv_name)
         archiver_status = aa.get_archiving_status(pv_name)
@@ -82,7 +85,7 @@ async def write_to_pv(pv: ExamplePV):
 
 
 PV_PREFIX = "ARCH"
-TIME_PERIOD_SECS = os.environ.get("TIME_PERIOD_SECS", 120)
+TIME_PERIOD_SECS = int(os.environ.get("TIME_PERIOD_SECS", 120))
 
 async def runner():
     print("start")
