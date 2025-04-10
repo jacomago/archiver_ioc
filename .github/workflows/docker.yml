@@ -14,7 +14,12 @@ jobs:
   build-and-push-image:
     strategy:
       matrix:
-        os: [ ubuntu-latest, ubuntu-24.04-arm]
+        include:
+          - os: ubuntu-latest
+            arch: linux/amd64
+          - os: ubuntu-24.04-arm
+            arch: linux/arm64
+    name: Build and push Docker image for ${{ matrix.os }} ${{ matrix.arch }}
     permissions:
       contents: read
       packages: write
@@ -39,6 +44,7 @@ jobs:
         with:
           context: .
           push: true
+          platforms: ${{ matrix.arch }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha
