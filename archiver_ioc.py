@@ -4,7 +4,8 @@ import time
 from p4p.nt import NTScalar
 from p4p.server import Server
 from p4p.server.thread import SharedPV
-
+from epicsarchiver import ArchiverAppliance
+from epicsarchiver.mgmt.archiver_mgmt_info import ArchivingStatus
 
 @dataclass
 class WritingOptions:
@@ -12,6 +13,8 @@ class WritingOptions:
     init: float
     increment: float
     interval: float
+    period: float = 0.0
+    method: str = "MONITOR"
 
 
 @dataclass
@@ -27,11 +30,28 @@ async def start_server_pv(pvs: dict[str, ExamplePV]):
         print("Creating server with PVs:")
         for pv_name in pvs.keys():
             print(pv_name)
+        print("Subscribing to archiver appliance")
+        archive_pvs(pvs)
+        print("Starting server")
         await write_to_pvs(pvs)
 
 
+def archive_pvs(pvs):
+    aa = ArchiverAppliance()
+    for pv_name in pvs.keys():
+        aa.pause_pv(pv_name)
+        archiver_status = aa.get_archiving_status(pv_name)
+        if archiver_status == ArchivingStatus.Paused:
+            aa.delete_pv(pv_name)
+        aa.archive_pv(
+            f"pva://{pv_name}",
+            samplingperiod=pvs[pv_name].options.period,
+            samplingmethod=pvs[pv_name].options.method,
+        )
+
+
 def pv_name(base_name: str, option: WritingOptions) -> str:
-    return f"{base_name}:{int(option.interval)}Hz"
+    return f"{base_name}:PERIOD-{int(1 / option.period)}Hz:METHOD-{option.method}:{int(option.interval)}Hz"
 
 
 def create_pvs(base_name: str, options: list[WritingOptions]) -> dict[str, ExamplePV]:
@@ -60,27 +80,28 @@ async def write_to_pv(pv: ExamplePV):
         pv.shared_pv.post(value, timestamp=time.time())
 
 
+PV_PREFIX = "ARCH"
+TIME_PERIOD_SECS = 240
+
 async def runner():
     print("start")
     await start_server_pv(
-        create_pvs("ARCH:PERIOD:14Hz:MONITOR",  [
-        WritingOptions(20 + 60 * 32, 20.0, 1.0, 32.0),
-    ])
-        | create_pvs("ARCH:PERIOD:32Hz:MONITOR",  [
-        WritingOptions(60 * 32, 0.0, 1.0, 32.0),
-    ])
-        | create_pvs("ARCH:PERIOD:14Hz:SCAN",  [
-        WritingOptions(40 + 60 * 32, 40.0, 1.0, 32.0),
-    ]) 
-        | create_pvs("ARCH:PERIOD:1Hz:MONITOR",  [
-        WritingOptions(20 + 60 * 5, 20.0, 1.0, 5.0),
-    ])
-        | create_pvs("ARCH:PERIOD:5Hz:MONITOR",  [
-        WritingOptions(60 * 5, 0.0, 1.0, 5.0),
-    ])
-        | create_pvs("ARCH:PERIOD:1Hz:SCAN",  [
-        WritingOptions(40 + 60 * 5, 40.0, 1.0, 5.0),
-    ])
+        create_pvs(
+            PV_PREFIX,
+            [
+                WritingOptions(20 + TIME_PERIOD_SECS * 32, 20.0, 1.0, 32.0, 0.07, "MONITOR"),
+            
+                WritingOptions(TIME_PERIOD_SECS * 32, 0.0, 1.0, 32.0, 0.03, "MONITOR"),
+            
+                WritingOptions(40 + TIME_PERIOD_SECS * 32, 40.0, 1.0, 32.0, 0.07, "SCAN"),
+            
+                WritingOptions(20 + TIME_PERIOD_SECS * 5, 20.0, 1.0, 5.0, 1, "MONITOR"),
+            
+                WritingOptions(TIME_PERIOD_SECS * 5, 0.0, 1.0, 5.0, 0.25, "MONITOR"),
+            
+                WritingOptions(40 + TIME_PERIOD_SECS * 5, 40.0, 1.0, 5.0, 1, "SCAN"),
+            ],
+        )
     )
     print("end")
 
