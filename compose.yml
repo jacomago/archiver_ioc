@@ -1,0 +1,67 @@
+services:
+  demo-ioc:
+    build: .
+  
+  aa:
+    image: ghcr.io/archiver-appliance/epicsarchiverap:singletomcat-92c7e77
+    hostname: aa
+    networks:
+      - net-2-cf
+    ports:
+      - "17665:8080"
+    depends_on:
+      mariadb:
+        condition: service_healthy
+        restart: true
+    healthcheck:
+      test: curl -s -f http://localhost:8080/mgmt/ui/index.html
+      start_period: 10s
+      interval: 10s
+      timeout: 120s
+      retries: 5
+    environment:
+      ARCHAPPL_APPLIANCES: /usr/local/tomcat/archappl_conf/singleappliances.xml
+    volumes:
+        - archapplconfig:/usr/local/tomcat/archappl_conf
+        - archapplstorage:/usr/local/tomcat/storage/
+  mariadb:
+    hostname: mariadb
+    image: mariadb
+    networks:
+      - net-2-cf
+    environment:
+      MYSQL_ROOT_PASSWORD: archappl
+      MYSQL_DATABASE: archappl
+      MYSQL_USER: archappl
+      MYSQL_PASSWORD: archappl
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    volumes:
+      - archappldata:/var/lib/mysql
+      - mariainit:/docker-entrypoint-initdb.d
+  
+networks:
+  net-2-cf:
+    driver: bridge
+volumes:
+
+  archapplconfig:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./docker/archappl/conf
+      o: bind
+
+  archapplstorage:
+  archappldata:
+    driver: local
+  mariainit:
+    driver: local
+    driver_opts:
+      type: none
+      device: ./docker/archappl/conf/sql
+      o: bind
