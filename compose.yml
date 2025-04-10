@@ -1,6 +1,6 @@
 services:
   demo-ioc:
-    image: ghcr.io/jacomago/archiver-ioc:latest
+    image: ghcr.io/jacomago/archiver-ioc:main
     depends_on:
       aa:
         condition: service_healthy
