@@ -8,6 +8,7 @@ from p4p.server.thread import SharedPV
 from epicsarchiver import ArchiverAppliance
 from epicsarchiver.mgmt.archiver_mgmt_info import ArchivingStatus
 
+
 @dataclass
 class WritingOptions:
     maximum: float
@@ -87,22 +88,22 @@ async def write_to_pv(pv: ExamplePV):
 PV_PREFIX = "ARCH"
 TIME_PERIOD_SECS = int(os.environ.get("TIME_PERIOD_SECS", 120))
 
+
 async def runner():
     print("start")
     await start_server_pv(
         create_pvs(
             PV_PREFIX,
             [
-                WritingOptions(20 + TIME_PERIOD_SECS * 32, 20.0, 1.0, 32.0, 0.07, "MONITOR"),
-            
+                WritingOptions(
+                    20 + TIME_PERIOD_SECS * 32, 20.0, 1.0, 32.0, 0.07, "MONITOR"
+                ),
                 WritingOptions(TIME_PERIOD_SECS * 32, 0.0, 1.0, 32.0, 0.03, "MONITOR"),
-            
-                WritingOptions(40 + TIME_PERIOD_SECS * 32, 40.0, 1.0, 32.0, 0.07, "SCAN"),
-            
+                WritingOptions(
+                    40 + TIME_PERIOD_SECS * 32, 40.0, 1.0, 32.0, 0.07, "SCAN"
+                ),
                 WritingOptions(20 + TIME_PERIOD_SECS * 5, 20.0, 1.0, 5.0, 1, "MONITOR"),
-            
                 WritingOptions(TIME_PERIOD_SECS * 5, 0.0, 1.0, 5.0, 0.25, "MONITOR"),
-            
                 WritingOptions(40 + TIME_PERIOD_SECS * 5, 40.0, 1.0, 5.0, 1, "SCAN"),
             ],
         )
